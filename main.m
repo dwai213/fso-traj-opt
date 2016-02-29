@@ -7,7 +7,7 @@ addpath sqp/
 
 %% CREATE TENTATIVE TRAJECTORY
 
-sat_cfg.T_final = 2*pi;
+sat_cfg.T_final = pi/4;
 sat_cfg.th0 = -pi/16; sat_cfg.B0 = [pi/2+0;0;0;0;0;0];
 sat1 = initEmitter(sat_cfg);
 
@@ -24,31 +24,26 @@ q_min = pi/180*[-190 0]';
 q_max = pi/180*[190 120]';
 
 [x_tentative, u_tentative] = initTentativeTraj(sat1,sat2);
-replayInterval = 3;
-evaluateTraj(sats,x_tentative,u_tentative,'tentative',25,replayInterval)
+replayInterval = 3; fig_num = 25;
+evaluateTraj(sats,x_tentative,u_tentative,'tentative',fig_num,replayInterval)
 
-fprintf('Done\r\n');
+fprintf('Done Creating Tentative Trajectory\r\n');
 
-%% CREATE TARGET TRAJECTORY
+%% CREATE TARGET, OL, CL TRAJECTORY
 tic
 f = @(x,u,dt) f_DT_sat_dynam(x,u,dt,{sat1 sat2});
 [x_target, u_target] = sqp_find_target_trajectory(f, x_tentative, u_tentative, u_min, u_max, q_min,q_max, {sat1 sat2});
 toc
-%% VISUALIZE TARGET TRAJECTORY
+fprintf('Done Creating Target Trajectory\r\n');
 
-evaluateTraj(sats,x_target,u_target,'target',25,replayInterval)
-
-%% VISUALIZE SIM TRAJECTORY
 x = x_tentative(:,1);
 x_sim = zeros(18,length(u_target));
 for t = 1:length(u_target)
     x_sim(:,t) = f_DT_sat_dynam(x,u_target(:,t),sat1.dT,{sat1 sat2});
     x = x_sim(:,t);
 end
+fprintf('Done Creating OL Trajectory\r\n');
 
-evaluateTraj(sats,x_sim,u_target,'sim',25,replayInterval)
-
-%% VISUALIZE CL TRAJECTORY
 nX = 18; nU = 6; T = size(x_tentative,2);
 Q_lqr = eye(nX, nX); Q_lqr(nX+1, nX+1) = 0;
 R_lqr = eye(nU, nU);
@@ -62,8 +57,19 @@ for t=1:T-1
     u_sim_cl(:,t) = u_LQR{t}*([x_sim_cl(:,t);1]-[x_target(:,t);0])+u_target(:,t);
     x_sim_cl(:,t+1) = f(x_sim_cl(:,t), u_sim_cl(:,t), sat1.dT);
 end
+fprintf('Done Creating CL Trajectory\r\n');
 
-evaluateTraj(sats,x_sim_cl,u_sim_cl,'CL',25,replayInterval)
+%% VISUALIZE TARGET TRAJECTORY
+
+evaluateTraj(sats,x_target,u_target,'target',fig_num,replayInterval)
+
+%% VISUALIZE OL TRAJECTORY
+
+evaluateTraj(sats,x_sim,u_target,'OL',fig_num,replayInterval)
+
+%% VISUALIZE CL TRAJECTORY
+
+evaluateTraj(sats,x_sim_cl,u_sim_cl,'CL',fig_num,replayInterval)
 
 %% Save Results
 % [sat1_sim_cl, sat2_sim_cl] = repack_to_sat(x_sim_cl,u_sim_cl,{sat1 sat2});
