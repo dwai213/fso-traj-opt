@@ -61,7 +61,7 @@ if (~user_cfg.g_use_numerical)
     %check if numerical and precomputed results are the same
     g = @(x) g_allConstraintsJach(x,traj_dynamics_cfg,sats);
 else
-    g = @(x) g_nadirConstraint(x,traj_dynamics_cfg,sats);
+    % g = @(x) g_nadirConstraint(x,traj_dynamics_cfg,sats);
 end
 
 %nonlinear equality constraint for dynamics

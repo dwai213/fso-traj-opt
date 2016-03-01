@@ -3,28 +3,18 @@ function gval = g_pointingConstraint(xu_trajectory,cfg,sats)
 % pointing errors
 nX = cfg.nX; T = cfg.T;
 
-epsilon = 1e3; %Tolerable error but definite should readjust later
+g = @(x,ind) g_pointingError(x,ind,sats);
 
-g = @(x) g_pointingError(x,sats);
-
+% figure(35), clf;
 gval = zeros(T,1);
 for t=1:T
    ind = (t-1)*nX+1;
-   gval(t) = g(xu_trajectory(ind:ind+nX-1)) - epsilon;
-end
-
-%Makes sure that states where the vector isn't even close won't get
-%considered
-maxError = max(gval);
-for t = 1:T
-    if isnan(gval(t))
-        gval(t) = 10*maxError;
-    end
+   gval(t) = g(xu_trajectory(ind:ind+nX-1),t)-1;
 end
 
 end
 
-function error = g_pointingError(xu_trajectory_t,sats)
+function err = g_pointingError(xu_trajectory_t,ind,sats)
     max_error = 10; %maximum allowable error in units of m, less than 1m
 
     emitter = sats{1}; receiver = sats{2};
@@ -46,7 +36,8 @@ function error = g_pointingError(xu_trajectory_t,sats)
     R2 = f_orbital2body(x2(4),x2(5),x2(6));
     T2 = R2*(receiver.tool); %tool point on craft
     N2 = T2/norm(T2,2); %normal vector for plane
-    [v1, v2] = generatePlane(T2+x2_0,N2); %basis vector for planes
+    
+    [v1, v2] = generatePlane(T2+x2_0,N2); %basis vector for receiver plane
     
     %compute intersection for plane and pointing vector
     p1 = x1_0 + T1;
@@ -54,8 +45,24 @@ function error = g_pointingError(xu_trajectory_t,sats)
     coeffs = [v1 v2 -N1]\(p1-p2);
     w = coeffs(3)*N1+p1;
     if coeffs(3) < 0 %pointing vector was pointing away from receiver
-        error = NaN;
+        err = 10;
+        error 'Got negative coefficient';
     else
-        error = norm(w-p2)/max_error;
+        err = norm(w-p2)/max_error;
     end
+    % fprintf('P2: %1.3d \t%1.3d \t%1.3d\n',p2);
+    % fprintf('w: %1.3d \t%1.3d \t%1.3d\n',w);
+    % fprintf('Err: %1.3d \n',err);
+    % fprintf('\n');
+
+    % if ind > 0
+    %     scale = 10000;
+    %     figure(35), hold on, view(0,90); axis equal
+    %     plot3(x1_0(1),x1_0(2),x1_0(3),'ko')
+    %     plot3(p1(1),p1(2),p1(3),'k*')
+    %     quiver(x1_0(1),x1_0(2),scale*T1(1),scale*T1(2));
+    %     plot3(x2_0(1),x2_0(2),x2_0(3),'bo')
+    %     plot3(p2(1),p2(2),p2(3),'b*')
+    % end
+
 end

@@ -34,20 +34,20 @@ function jach = computeJacobian(xu_trajectory,cfg,sats)
                 delta(ind) = 0;
             end
         else
-%             %variations on u_t-1
-%             j = i-nX*T;
-%             t = ceil(j/nU);           
-%             if t ~= 1 %skip the first variations on u_1, they don't affect g_1
-%                 ind = mod(j,nU)+nX; if (ind == 0); ind = nU+nX; end
-%                 indX = (t-1)*2+1;
-%                 delta(ind) = eps/2;
-%                 xp = [x_traj(:,t-1); u_traj(:,t-1)];
-%                 temp_hi = f(xp+delta); temp_lo = f(xp-delta);
-%                 temp = (temp_hi - temp_lo)/eps;
-%                 delta(ind) = 0;
-%                 var_x = jach(indX:indX+1,(t-1)*nX+1:t*nX); %variation on x_t
-%                 jach(indX:indX+1,i) = var_x*temp;
-%             end
+            %variations on u_t-1
+            % j = i-nX*T;
+            % t = ceil(j/nU);           
+            % if t ~= 1 %skip the first variations on u_1, they don't affect g_1
+            %     ind = mod(j,nU)+nX; if (ind == 0); ind = nU+nX; end
+            %     indX = (t-1)*2+1;
+            %     delta(ind) = eps/2;
+            %     xp = [x_traj(:,t-1); u_traj(:,t-1)];
+            %     temp_hi = f(xp+delta); temp_lo = f(xp-delta);
+            %     temp = (temp_hi - temp_lo)/eps;
+            %     delta(ind) = 0;
+            %     var_x = jach(indX:indX+1,(t-1)*nX+1:t*nX); %variation on x_t
+            %     jach(indX:indX+1,i) = var_x*temp;
+            % end
         end
     end
 end

@@ -5,7 +5,7 @@ sat1 = sats{1};
 sat2 = sats{2};
 [nadir_score, point_score] = score_allConstraints(x,u,{sat1 sat2});
 [newSat1, newSat2] = repack_to_sat(x,u,{sat1 sat2});
-visualizeOrbits({newSat1, newSat2},interval);
+visualizeOrbits({newSat1, newSat2},interval,traj_type);
 
 figure(fig_num)
 subplot(2,2,2)

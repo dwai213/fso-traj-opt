@@ -7,11 +7,11 @@ addpath sqp/
 
 %% CREATE TENTATIVE TRAJECTORY
 
-sat_cfg.T_final = pi/4;
-sat_cfg.th0 = -pi/16; sat_cfg.B0 = [pi/2+0;0;0;0;0;0];
+sat_cfg.T_final = pi/16;
+sat_cfg.th0 = 0; sat_cfg.B0 = [-sat_cfg.th0;0;0;0;0;0];
 sat1 = initEmitter(sat_cfg);
 
-sat_cfg.th0 = 0; sat_cfg.B0 = [pi/2+0;0;0;0;0;0];
+sat_cfg.th0 = pi/32/365; sat_cfg.B0 = [-sat_cfg.th0;0;0;0;0;0];
 sat2 = initReceiver(sat_cfg);
 sats = {sat1,sat2};
 
@@ -65,11 +65,11 @@ evaluateTraj(sats,x_target,u_target,'target',fig_num,replayInterval)
 
 %% VISUALIZE OL TRAJECTORY
 
-evaluateTraj(sats,x_sim,u_target,'OL',fig_num,replayInterval)
+evaluateTraj(sats,x_sim,u_target,'OL',fig_num+1,replayInterval)
 
 %% VISUALIZE CL TRAJECTORY
 
-evaluateTraj(sats,x_sim_cl,u_sim_cl,'CL',fig_num,replayInterval)
+evaluateTraj(sats,x_sim_cl,u_sim_cl,'CL',fig_num+2,replayInterval)
 
 %% Save Results
 % [sat1_sim_cl, sat2_sim_cl] = repack_to_sat(x_sim_cl,u_sim_cl,{sat1 sat2});
