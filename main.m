@@ -7,11 +7,11 @@ addpath sqp/
 
 %% CREATE TENTATIVE TRAJECTORY
 
-sat_cfg.T_final = pi/16;
-sat_cfg.th0 = 0; sat_cfg.B0 = [-sat_cfg.th0;0;0;0;0;0];
+sat_cfg.T_final = pi/4;
+sat_cfg.th0 = pi/8-pi/32/365; sat_cfg.B0 = [-sat_cfg.th0;0;0;0;0;0];
 sat1 = initEmitter(sat_cfg);
 
-sat_cfg.th0 = pi/32/365; sat_cfg.B0 = [-sat_cfg.th0;0;0;0;0;0];
+sat_cfg.th0 = pi/8; sat_cfg.B0 = [-sat_cfg.th0;0;0;0;0;0];
 sat2 = initReceiver(sat_cfg);
 sats = {sat1,sat2};
 
@@ -24,7 +24,7 @@ q_min = pi/180*[-190 0]';
 q_max = pi/180*[190 120]';
 
 [x_tentative, u_tentative] = initTentativeTraj(sat1,sat2);
-replayInterval = 3; fig_num = 25;
+replayInterval = 5; fig_num = 25;
 evaluateTraj(sats,x_tentative,u_tentative,'tentative',fig_num,replayInterval)
 
 fprintf('Done Creating Tentative Trajectory\r\n');
@@ -37,8 +37,8 @@ toc
 fprintf('Done Creating Target Trajectory\r\n');
 
 x = x_tentative(:,1);
-x_sim = zeros(18,length(u_target));
-for t = 1:length(u_target)
+x_sim = zeros(18,size(u_target,2));
+for t = 1:size(u_target,2)
     x_sim(:,t) = f_DT_sat_dynam(x,u_target(:,t),sat1.dT,{sat1 sat2});
     x = x_sim(:,t);
 end

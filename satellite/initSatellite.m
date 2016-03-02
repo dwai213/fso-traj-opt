@@ -3,7 +3,7 @@ function sat = initSatellite(planet,sat_cfg)
 
 
 cfg = {};
-cfg.dT = 25;
+cfg.dT = 10;
 cfg.M = 600; cfg.R = 2000e3; cfg.T = 127; cfg.incl = 5;
 cfg.th0 = pi/16;
 cfg.T_final = pi/64;

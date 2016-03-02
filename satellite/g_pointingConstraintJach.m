@@ -14,7 +14,7 @@ function jach = computeJacobian(xu_trajectory,cfg,sats)
     nXUT = (nX+nU)*T;
     f = @(state) f_DT_sat_dynam(state(1:nX),state(nX+1:end),1,sats); %HARDCODED MAKE THIS BETTER
     jach = zeros(T,nXUT);
-    eps = 1e-3;
+    eps = 1e-5; %1e-3 too big for th
     delta = zeros(nX+nU,1);
     single_cfg.nX = nX; single_cfg.nU = nU; single_cfg.T = 1;
     g = @(x) g_pointingConstraint(x,single_cfg,sats);

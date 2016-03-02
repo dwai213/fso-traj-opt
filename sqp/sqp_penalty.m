@@ -172,12 +172,12 @@ function [x, trust_box_size, success] = minimize_merit_function(x, Q, q, ...
         if cfg.g_use_numerical
             gval = g(x);
             gjac = numerical_jac(g,x);
-        else           
+        else
             [gval, gjac] = g(x);
         end
 %         fprintf('  computing h gradients\n');            
         if cfg.h_use_numerical
-            error('Do not use numerical h');
+            error 'Do not use numerical h';
             % hval = h(x);
             % hjac = numerical_jac(h,x);
         else
